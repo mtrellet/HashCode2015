@@ -140,8 +140,8 @@ listgroups = [-1 for i in xrange(nbservers)]
 for i in xrange(len(listidserveurs)):
 	listgroups[listidserveurs[i]] = i%nbgroupes
 
-print get_min_capacity(matrice,servsort,listgroups,nbgroupes)
-dumpfile(filename,matrice,servsort,listgroups)
+print get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
+dumpfile(filename,matrice,serveurs,listgroups)
 
 # mymin = -5
 # curmin = 0

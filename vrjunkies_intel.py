@@ -79,37 +79,11 @@ for i in xrange(nbindispo):
 	serv = indispos[i]
 	matrice[serv[0]][serv[1]] = False
 
-serveurs.sort(reverse=True)
+def getKey(item):
+	return item[1]
 
-# curid = 0
-# flagstop = False
-# for col in xrange(nbempla):
-# 	if flagstop:
-# 		break
-# 	currangempla = 0
-# 	while currangempla < nbranges and curid<nbservers:
-# 		if curid == nbservers:
-# 			flagstop = True
-# 			break
-# 		flag = True
-# 		if matrice[currangempla][col]!=False:
-# 			monserv = serveurs[curid]
-# 			if currangempla + monserv[0] <= nbranges:
-# 				flag = True
-# 				for i in xrange(monserv[0]):
-# 						if matrice[i+currangempla][col] == False:
-# 							flag = False
-# 							currangempla+=1
-# 							break
-# 				if flag:
-# 					for i in xrange(monserv[0]):
-# 						matrice[i+currangempla][col] = serveurs[curid][2]
-# 					currangempla += monserv[0]
-# 					curid+=1
-# 			else:
-# 				break
-# 		else:
-# 			currangempla+=1
+#Sort by capacity
+servsort = sorted(serveurs,reverse=True,key=getKey)
 
 
 listidserveurs = []
@@ -124,43 +98,63 @@ for lig in xrange(nbranges):
 			flagstop = True
 			break
 		flag = True
-		if matrice[lig][curempla]!=False:
-			monserv = serveurs[curid]
-			if curempla + monserv[0] <= nbempla:
-				flag = True
+		monserv = servsort[curid]
+		if curempla + monserv[0] <= nbempla:
+			flag = True
+			for i in xrange(monserv[0]):
+					if matrice[lig][i+curempla] == False:
+						flag = False
+						curempla+=1
+						break
+			#TO DO => loop over others !
+			if flag:
 				for i in xrange(monserv[0]):
-						if matrice[lig][i+curempla] == False:
-							flag = False
-							curempla+=1
-							break
-				#TO DO => loop over others !
-				if flag:
-					for i in xrange(monserv[0]):
-						matrice[lig][i+curempla] = serveurs[curid][2]
-					curempla += monserv[0]
-					curid+=1
-					listidserveurs.append(serveurs[curid][2])
+					matrice[lig][i+curempla] = servsort[curid][2]
+				curempla += monserv[0]
+				curid+=1
+				listidserveurs.append(servsort[curid][2])
 			else:
-				break
+				#curempla+=monserv[0]
+				curempla+=1
 		else:
-			curempla+=1
+			break
 
-# listgroups = [-1 for i in xrange(nbservers)]
-# for i in xrange(len(listidserveurs)):
-# 	listgroups[listidserveurs[i]] = i%nbgroupes
+print "Nombre de serveurs callés =",curid
 
-mymin = -5
-curmin = 0
-while 1:
-	listgroups =  []
-	for i in range(nbservers):
-		listgroups.append(random.randint(0,nbgroupes-1))
+cpt = 0
+for i in matrice:
+	for j in i:
+		if j==True:
+			cpt+=1
 
-	curmin = get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
-	if curmin > mymin:
-			mymin = curmin
-			print "Current result = ",curmin
-			dumpfile(filename,matrice,serveurs,listgroups)
+print "Nombre de places non remplies = ",cpt-nbindispo
+
+for i in range(len(matrice)):
+	for j in range(len(matrice[i])):
+		if matrice[i][j] == False and orimat[i][j] != False:
+			print "Probleme avec ",i,j
+
+
+
+listgroups = [-1 for i in xrange(nbservers)]
+for i in xrange(len(listidserveurs)):
+	listgroups[listidserveurs[i]] = i%nbgroupes
+
+print get_min_capacity(matrice,servsort,listgroups,nbgroupes)
+dumpfile(filename,matrice,servsort,listgroups)
+
+# mymin = -5
+# curmin = 0
+# while 1:
+# 	listgroups =  []
+# 	for i in range(nbservers):
+# 		listgroups.append(random.randint(0,nbgroupes-1))
+
+# 	curmin = get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
+# 	if curmin > mymin:
+# 			mymin = curmin
+# 			print "Current result = ",curmin
+# 			dumpfile(filename,matrice,serveurs,listgroups)
 
 
 

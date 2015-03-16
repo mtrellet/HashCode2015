@@ -14,7 +14,7 @@ def get_min_capacity(matrice,serveurs,listgroups,nbgroupes):
 		for i in xrange(len(matrice)):
 			if i != h:
 				for j in xrange(len(matrice[i])):
-					if matrice[i][j]!= False and matrice[i][j] != True:
+					if matrice[i][j]!= "NO" and matrice[i][j] != "ok":
 						myid = matrice[i][j]
 						if roam_serveurs[myid]==False:
 							numgroup = listgroups[myid]
@@ -30,7 +30,7 @@ def dumpfile(filename,matrice,serveurs,listgroups):
 	to_write = ["x" for i in xrange(len(serveurs))]
 	for i in xrange(len(matrice)):
 		for j in xrange(len(matrice[i])):
-			if matrice[i][j]!= False and matrice[i][j] != True:
+			if matrice[i][j]!= "NO" and matrice[i][j] != "ok":
 				myid = matrice[i][j]
 				if roam_serveurs[myid]==False:
 					roam_serveurs[myid] = True
@@ -73,11 +73,11 @@ matrice = []
 for i in xrange(nbranges):
 	matrice.append([])
 	for j in xrange(nbempla):
-		matrice[i].append(True)
+		matrice[i].append("ok")
 
 for i in xrange(nbindispo):
 	serv = indispos[i]
-	matrice[serv[0]][serv[1]] = False
+	matrice[serv[0]][serv[1]] = "NO"
 
 def getKey(item):
 	return item[1]
@@ -102,38 +102,32 @@ for lig in xrange(nbranges):
 		if curempla + monserv[0] <= nbempla:
 			flag = True
 			for i in xrange(monserv[0]):
-					if matrice[lig][i+curempla] == False:
+					if matrice[lig][i+curempla] == "NO":
 						flag = False
 						curempla+=1
 						break
 			#TO DO => loop over others !
 			if flag:
 				for i in xrange(monserv[0]):
-					matrice[lig][i+curempla] = servsort[curid][2]
+					matrice[lig][i+curempla] = monserv[2]
 				curempla += monserv[0]
 				curid+=1
-				listidserveurs.append(servsort[curid][2])
+				listidserveurs.append(monserv[2])
 			else:
 				#curempla+=monserv[0]
 				curempla+=1
 		else:
 			break
 
-print "Nombre de serveurs callés =",curid
+print "Nombre de serveurs calles =",curid
 
 cpt = 0
 for i in matrice:
 	for j in i:
-		if j==True:
+		if j=="ok":
 			cpt+=1
 
 print "Nombre de places non remplies = ",cpt-nbindispo
-
-for i in range(len(matrice)):
-	for j in range(len(matrice[i])):
-		if matrice[i][j] == False and orimat[i][j] != False:
-			print "Probleme avec ",i,j
-
 
 
 listgroups = [-1 for i in xrange(nbservers)]

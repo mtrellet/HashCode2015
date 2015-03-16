@@ -119,6 +119,38 @@ for lig in xrange(nbranges):
 		else:
 			break
 
+flagstop = False
+for lig in xrange(nbranges-1,-1,-1):
+	if flagstop:
+		break
+	curempla = 0
+	while curempla < nbempla and curid<nbservers:
+		if curid == nbservers:
+			flagstop = True
+			break
+		flag = True
+		monserv = servsort[curid]
+		if curempla + monserv[0] <= nbempla:
+			flag = True
+			for i in xrange(monserv[0]):
+					if matrice[lig][i+curempla] == "NO":
+						flag = False
+						curempla+=1
+						break
+			#TO DO => loop over others !
+			if flag:
+				for i in xrange(monserv[0]):
+					matrice[lig][i+curempla] = monserv[2]
+				curempla += monserv[0]
+				curid+=1
+				listidserveurs.append(monserv[2])
+			else:
+				#curempla+=monserv[0]
+				curempla+=1
+		else:
+			break
+
+
 print "Nombre de serveurs calles =",curid
 
 cpt = 0
@@ -134,21 +166,34 @@ listgroups = [-1 for i in xrange(nbservers)]
 for i in xrange(len(listidserveurs)):
 	listgroups[listidserveurs[i]] = i%nbgroupes
 
+
 print get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
-dumpfile(filename,matrice,serveurs,listgroups)
 
-# mymin = -5
-# curmin = 0
-# while 1:
-# 	listgroups =  []
-# 	for i in range(nbservers):
-# 		listgroups.append(random.randint(0,nbgroupes-1))
+mymin = -5
+curmin = 0
+while 1:
+	listgroups =  []
+	for i in xrange(nbservers):
+		listgroups.append(i%nbgroupes)
+		#listgroups.append(random.randint(0,nbgroupes-1))
+	random.shuffle(listgroups)
 
-# 	curmin = get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
-# 	if curmin > mymin:
-# 			mymin = curmin
-# 			print "Current result = ",curmin
-# 			dumpfile(filename,matrice,serveurs,listgroups)
+	curmin = get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
+	if curmin > mymin:
+			mymin = curmin
+			print "Current result = ",curmin
+			dumpfile(filename,matrice,serveurs,listgroups)
+
+	listgroups =  []
+	for i in xrange(nbservers):
+		#listgroups.append(i%nbgroupes)
+		listgroups.append(random.randint(0,nbgroupes-1))
+
+	curmin = get_min_capacity(matrice,serveurs,listgroups,nbgroupes)
+	if curmin > mymin:
+			mymin = curmin
+			print "Current result = ",curmin
+			dumpfile(filename,matrice,serveurs,listgroups)
 
 
 
